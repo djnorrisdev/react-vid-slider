@@ -5,14 +5,13 @@ import Slider from './components/Slider';
 import video from "./videos/snow_aerial.mp4";
 
 class App extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       data: 
       {
         src: video
       }
-
     }
   }
   render() {

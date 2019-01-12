@@ -108,19 +108,20 @@ class Slider extends Component {
     this.interval = null;
   }
     componentDidMount() {
-      console.log()
-      document.getElementById(`video`).addEventListener('ended', this.checkEnded)
+      document.querySelectorAll(`video`).forEach(el => el.addEventListener('ended', this.checkEnded))
       this.setInterval();
     }
 
     setInterval = () => {
         this.interval = setInterval(this.handleSlide, this.state.time);
     }
+
     checkEnded = () => {
-      console.log('ended')
-      this.setState ({
+      this.setState(state => ({
+        ...state,
         running: false
-      })
+      }));
+
       if (this.state.current === this.state.data.length -1 ) {
         this.setState({
           current: 0
@@ -139,46 +140,40 @@ class Slider extends Component {
         if (item.video === true && i === this.state.current) {
           clearInterval(this.interval);
           this.setState({
-            running: true,
+            running: true
           });
-          this.vidRef.current.play();
         } 
       })
-     if (!this.state.running && this.state.current < this.state.data.length - 1) {
+      if (!this.state.running && this.state.current < this.state.data.length - 1) {
           this.setState ({
             current: this.state.current + 1
           })
         } else {
-          console.log(this.state.running)
-          this.state.running ? 
-          this.setState({
-          current: this.state.current
-        }) :
         this.setState({
-          current: 0
+          current: this.state.running ? this.state.current : 0
         })
       }
     }
 
     handleButtons = ({ target: { name } }) => {
-        if (name === "left" && this.state.current <= 0) {
-          this.setState({
-            current: 0
-          });
-        } else if (name === "left") {
-          this.setState({
-            current: this.state.current - 1
-          });
-        } else if (name === "right" && this.state.current < this.state.data.length -1) {
-          this.setState({
-            current: this.state.current + 1
-          });
-        } else {
-          this.setState({
-            current: 0
-          });
-        }
+      if (name === "left" && this.state.current <= 0) {
+        this.setState({
+          current: 0
+        });
+      } else if (name === "left") {
+        this.setState({
+          current: this.state.current - 1
+        });
+      } else if (name === "right" && this.state.current < this.state.data.length -1) {
+        this.setState({
+          current: this.state.current + 1
+        });
+      } else {
+        this.setState({
+          current: 0
+        });
       }
+    }
 
   render() {
     console.log(this.state.current)
@@ -188,7 +183,7 @@ class Slider extends Component {
         <Carousel count={data.length} current={current}>
           {data.map((item, i) => (
             item.video ?
-            <Video ref={this.vidRef} id="video" width="100%" height="auto" type="video/mp4" poster="../public/images/ssLogo.png" controls src={item.image} key={i}><source src={this.state.data.src}/></Video> : 
+            <Video ref={this.vidRef} className={`video`} width="100%" height="auto" type="video/mp4" poster="../public/images/ssLogo.png" autoPlay controls src={current === i ? item.image : ''} key={i}></Video> : 
             <Image key={i} src={item.image}>
             </Image>
           ))}
