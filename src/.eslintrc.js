@@ -10,4 +10,7 @@ module.exports = {
   extends: [
     'airbnb-standard',
   ],
+  "rules": {
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+  }
 };
