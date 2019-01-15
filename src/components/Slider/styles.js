@@ -7,7 +7,7 @@ export const Carousel = styled.div`
   width: ${props => props.count}00vw;
   height: 100%;
   transform: translateX(-${props => props.current}00vw);
-  transition: transform ${props => (props.current === 0 ? '0s ease-in' : '0.35s ease-in-out')};
+  transition: transform ${props => (props.current === 0 ? '0s ease-in' : '0.5s ease-in-out')};
   background-color: #111111;
 `;
 

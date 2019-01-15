@@ -12,6 +12,13 @@ class Slider extends Component {
       running: false,
       data: [
         {
+          image: require('../../videos/snow_aerial.mp4'),
+          title: 'Card Five',
+          content: 'this is some test content',
+          link: '',
+          video: true
+        },
+        {
           image:
             'https://magazine.artstation.com/wp-content/uploads/2017/12/raphael-lacoste-castle-mood-1.jpg',
           title: 'Card One',
@@ -28,7 +35,7 @@ class Slider extends Component {
           video: false
         },
         {
-          image: require('../../videos/mtb.mp4'),
+          image: require('../../videos/sunset.mp4'),
           title: 'Card Three',
           content: 'this is some test content',
           link: '',
@@ -42,7 +49,7 @@ class Slider extends Component {
           video: false
         },
         {
-          image: require('../../videos/snow_aerial.mp4'),
+          image: require('../../videos/waves.mp4'),
           title: 'Card Five',
           content: 'this is some test content',
           link: '',
@@ -62,21 +69,22 @@ class Slider extends Component {
   }
 
   componentDidMount () {
-    // document.querySelectorAll(`video`).forEach(el => el.addEventListener('ended', this.checkEnded));
+    // Comment out querySelector for infinite loop
+    document.querySelectorAll(`video`).forEach(el => el.addEventListener('ended', this.checkEnded));
     this.setInterval();
   }
 
     setInterval = () => {
       this.interval = setInterval(this.handleSlide, this.state.time);
-      this.setListener();
+      // Uncomment for infinite loop
+      // this.setListener();
     }
-
-    setListener = () => {
-      document.querySelectorAll(`video`).forEach(el => el.addEventListener('ended', this.checkEnded));
-    }    
+    // Uncomment for infinite loop
+    // setListener = () => {
+    //   document.querySelectorAll(`video`).forEach(el => el.addEventListener('ended', this.checkEnded));
+    // }
 
     checkEnded = () => {
-      console.log('fired')
       const { current, data } = this.state;
       this.setState(state => ({
         ...state,
@@ -98,10 +106,10 @@ class Slider extends Component {
       }
     }
 
-    handleSlide = () => {
-      // Not destructured due to resulting bug
-      this.state.data.forEach((item, i) => {
-        if (item.video === true && i === this.state.current) {
+    handleVideo = () => {
+      const { current, data } = this.state;
+      data.forEach((item, i) => {
+        if (item.video && i === current) {
           clearInterval(this.interval);
           this.setState(state => ({
             ...state,
@@ -109,27 +117,36 @@ class Slider extends Component {
           }));
         }
       });
-      if (!this.state.running && this.state.current < this.state.data.length - 1) {
+    };
+
+    handleSlide = () => {
+      // Not completely destructured due to resulting bug
+      const { current, data } = this.state;
+      this.handleVideo();
+
+      if (!this.state.running && current < data.length - 1) {
         this.setState(state => ({
           ...state,
-          current: this.state.current + 1
+          current: current + 1
         }));
       } else if (this.state.running) {
         this.setState(state => ({
           ...state,
-          current: this.state.current
+          current
         }));
-        // this.setState(state => ({
-        //   ...state,
-        //   current: this.state.running ? this.state.current : 0
-        // }));
+        
       } else {
-        const loop = [...this.state.data];
-        this.setState(prevState => ({
-          ...prevState,
-          data: [...this.state.data, ...loop]
+        this.setState(state => ({
+          ...state,
+          current: this.state.running ? current : 0
         }));
-        this.setListener();
+        // For infinite loop (replace else statement with below code)
+        // const loop = [...this.state.data];
+        // this.setState(prevState => ({
+        //   ...prevState,
+        //   data: [...this.state.data, ...loop]
+        // }));
+        // this.setListener();
       }
     }
 
@@ -159,14 +176,14 @@ class Slider extends Component {
     }
 
     render () {
-      console.log(this.state.current);
+      console.log(this.state.running, this.state.current)
       const { current, data } = this.state;
       return (
         <React.Fragment>
           <Carousel count={data.length} current={current}>
             {data.map((item, i) => (
               item.video
-                ? <Video ref={this.vidRef} className="video" width="100%" height="auto" type="video/mp4" poster="../public/images/ssLogo.png" autoPlay controls src={current === i ? item.image : ''} key={i} />
+                ? <Video className="video" width="100%" height="auto" type="video/mp4" poster="../public/images/ssLogo.png" autoPlay controls muted src={current === i ? item.image : ''} key={i} />
                 : <Image key={i} src={item.image} />
             ))}
           </Carousel>
